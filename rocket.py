@@ -10,6 +10,7 @@ height = 600
 class Rocket:
     def __init__(self, start_x, start_y):
         self.speed = 0
+        self.moving_angle = 0
         self.rotation_angle = 0
         self.image = pygame.image.load("arrow.png").convert_alpha()
         self.rotated_rect = self.image.get_rect(center=(start_x, start_y))
@@ -30,16 +31,35 @@ class Rocket:
 
     def increase_speed(self):
         self.speed = min(self.speed + 0.1,  3)
+        if self.moving_angle > self.rotation_angle:
+            self.moving_angle = max(self.rotation_angle, self.moving_angle - 1.5)
+        elif self.moving_angle < self.rotation_angle:
+            self.moving_angle = min(self.rotation_angle, self.moving_angle + 1.5)
 
     def fade_speed(self):
-        self.speed = max(self.speed - 0.03, 0)
+        self.speed = max(self.speed - 0.01, 0)
 
     def get_next_frame_coordinates(self):
         self.rotated_rect.x += self.speed * math.cos(self._get_angle_in_radians())
         self.image_rect.x += self.speed * math.cos(self._get_angle_in_radians())
         self.rotated_rect.y -= self.speed * math.sin(self._get_angle_in_radians())
         self.image_rect.y -= self.speed * math.sin(self._get_angle_in_radians())
+        self._fix_out_of_borders()
         self.fade_speed()
 
     def _get_angle_in_radians(self):
-        return self.rotation_angle / 360 * 2 * math.pi
+        return self.moving_angle / 360 * 2 * math.pi
+
+    def _fix_out_of_borders(self):
+        if self.image_rect.x >= width:
+            self.image_rect.x = -self.image.get_rect().size[0]
+            self.rotated_rect.x = -self.rotated_image.get_rect().size[0]
+        elif self.image_rect.right <= 0:
+            self.image_rect.x = width
+            self.rotated_rect.x = width
+        if self.image_rect.top >= height:
+            self.image_rect.top = -self.image.get_rect().size[1]
+            self.rotated_rect.top = -self.rotated_image.get_rect().size[1]
+        elif self.image_rect.bottom <= 0:
+            self.image_rect.top = height
+            self.rotated_rect.top = height
