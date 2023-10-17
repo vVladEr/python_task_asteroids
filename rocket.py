@@ -39,6 +39,8 @@ class Rocket:
 
     def fade_speed(self):
         self.speed = max(self.speed - 0.01, 0)
+        if self.speed == 0:
+            self.moving_angle = self.rotation_angle
 
     def get_next_frame_coordinates(self):
         self.rotated_rect.x += self.speed * math.cos(self._get_angle_in_radians())

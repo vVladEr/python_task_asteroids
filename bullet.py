@@ -16,8 +16,8 @@ class Bullet:
         self.cur_x = x
         self.cur_y = y
         self.moving_angle = moving_angle
-        self.speed = 7
-        self.max_distance = 200
+        self.speed = 10
+        self.max_distance = 400
         self._radius = 4
 
     def update(self, screen):
