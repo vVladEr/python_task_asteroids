@@ -18,6 +18,7 @@ while not done:
     if pressed[pygame.K_UP]: rocket.increase_speed()
     if pressed[pygame.K_LEFT]: rocket.turn_left()
     if pressed[pygame.K_RIGHT]: rocket.turn_right()
+    #if pressed[pygame.K_SPACE]: rocket.fire()
 
     screen.fill((0, 0, 0))
     rocket.get_next_frame_coordinates()
