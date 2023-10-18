@@ -25,6 +25,8 @@ while not done:
     rocket.get_next_frame_coordinates()
     objects.update_bullets()
     objects.update_asteroids()
+    objects.bullet_hit_asteroid()
+    done = objects.rocket_hit_asteroid()
 
     screen.blit(rocket.rotated_image, rocket.rotated_rect)
     #pygame.draw.rect(screen, color, pygame.Rect(x, y, 60, 60))

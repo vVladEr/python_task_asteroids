@@ -34,3 +34,23 @@ class GameObjectsLogic:
     def update_asteroids(self):
         for aster in self.active_asteroids:
             aster.update()
+
+    def bullet_hit_asteroid(self):
+        bul_to_destroy = []
+        astr_to_destroy = []
+        for i in range(len(self.active_bullets)):
+            for j in range(len(self.active_asteroids)):
+                if self.active_asteroids[j].image_rect.collidepoint(self.active_bullets[i].cur_x,
+                                                                    self.active_bullets[i].cur_y):
+                    bul_to_destroy.append(i)
+                    astr_to_destroy.append(j)
+        for i in bul_to_destroy:
+            del self.active_bullets[i]
+        for i in astr_to_destroy:
+            del self.active_asteroids[i]
+
+    def rocket_hit_asteroid(self):
+        for aster in self.active_asteroids:
+            if self.rocket.image_rect.colliderect(aster.image_rect):
+                return True
+        return False
