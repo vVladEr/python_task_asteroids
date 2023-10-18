@@ -4,6 +4,9 @@ import math
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
+width = 800
+height = 600
+
 
 def _get_distance(x1, y1, x2, y2):
     return math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))
@@ -19,17 +22,45 @@ class Bullet:
         self.speed = 10
         self.max_distance = 400
         self._radius = 4
+        self._cross_top = False
+        self._cross_right = False
+        self._cross_bottom = False
+        self._cross_left = False
 
     def update(self, screen):
-        pygame.draw.circle(screen, BLACK, (self.cur_x, self.cur_y), self._radius)
         self.cur_x += self.speed * math.cos(self._get_angle_in_radians())
         self.cur_y -= self.speed * math.sin(self._get_angle_in_radians())
+        self._fix_out_of_borders()
         pygame.draw.circle(screen, WHITE, (self.cur_x, self.cur_y), self._radius)
 
     def is_far_enough(self):
-        return _get_distance(self.cur_x, self.cur_y, self.spawn_point_x, self.spawn_point_y) >= self.max_distance
+        temp_x = self.cur_x
+        temp_y = self.cur_y
+        if self._cross_top:
+            temp_y = -(height - temp_y)
+        elif self._cross_bottom:
+            temp_y += height
+        if self._cross_right:
+            temp_x += width
+        elif self._cross_left:
+            temp_x = -(width - temp_x)
+        return _get_distance(temp_x,
+                             temp_y,
+                             self.spawn_point_x, self.spawn_point_y) >= self.max_distance
 
     def _get_angle_in_radians(self):
         return self.moving_angle / 360 * 2 * math.pi
 
-
+    def _fix_out_of_borders(self):
+        if self.cur_x >= width:
+            self.cur_x = 0
+            self._cross_right = True
+        elif self.cur_x <= 0:
+            self.cur_x = width
+            self._cross_left = True
+        if self.cur_y >= height:
+            self.cur_y = 0
+            self._cross_bottom = True
+        elif self.cur_y <= 0:
+            self.cur_y = height
+            self._cross_top = True

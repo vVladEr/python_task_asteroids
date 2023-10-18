@@ -1,6 +1,7 @@
 import rocket
 import bullet
 import pygame
+import asteroid
 
 
 class GameObjectsLogic:
@@ -8,6 +9,9 @@ class GameObjectsLogic:
         self._screen = screen
         self.rocket = rocket.Rocket(400, 300)
         self.active_bullets = []
+        self.active_asteroids = [asteroid.Asteroid(self._screen),
+                                 asteroid.Asteroid(self._screen),
+                                 asteroid.Asteroid(self._screen)]
         self._last_time_fired = 0
 
     def fire(self):
@@ -27,3 +31,6 @@ class GameObjectsLogic:
         for i in far_bullets:
             del self.active_bullets[i]
 
+    def update_asteroids(self):
+        for aster in self.active_asteroids:
+            aster.update()
