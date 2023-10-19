@@ -29,7 +29,6 @@ while not done:
     done = objects.rocket_hit_asteroid()
 
     screen.blit(rocket.rotated_image, rocket.rotated_rect)
-    #pygame.draw.rect(screen, color, pygame.Rect(x, y, 60, 60))
 
     pygame.display.flip()
     clock.tick(60)
