@@ -16,6 +16,7 @@ class Rocket:
         self.image_rect = self.image.get_rect(center=(start_x, start_y))
         self.rotated_image = self.image
         self.active_bullets = []
+        self.score = 0
 
     def turn_right(self):
         self.rotation_angle -= 2

@@ -2,16 +2,22 @@ import rocket
 import bullet
 import pygame
 import asteroid
+import random
 
+width = 800
+height = 600
 
 class GameObjectsLogic:
     def __init__(self, screen):
         self._screen = screen
         self.rocket = rocket.Rocket(400, 300)
         self.active_bullets = []
-        self.active_asteroids = [asteroid.Asteroid(self._screen),
-                                 asteroid.Asteroid(self._screen),
-                                 asteroid.Asteroid(self._screen)]
+        self.active_asteroids = [asteroid.Asteroid(self._screen, 0, random.randint(0, width),
+                                                   random.randint(0, height)),
+                                 asteroid.Asteroid(self._screen, 1, random.randint(0, width),
+                                                   random.randint(0, height)),
+                                 asteroid.Asteroid(self._screen, 2, random.randint(0, width),
+                                                   random.randint(0, height))]
         self._last_time_fired = 0
 
     def fire(self):
@@ -42,11 +48,18 @@ class GameObjectsLogic:
             for j in range(len(self.active_asteroids)):
                 if self.active_asteroids[j].image_rect.collidepoint(self.active_bullets[i].cur_x,
                                                                     self.active_bullets[i].cur_y):
+                    self.rocket.score += 10
                     bul_to_destroy.append(i)
                     astr_to_destroy.append(j)
         for i in bul_to_destroy:
             del self.active_bullets[i]
         for i in astr_to_destroy:
+            astr = self.active_asteroids[i]
+            if astr.size > 0:
+                self.active_asteroids.append(asteroid.Asteroid(self._screen, astr.size - 1,
+                                                               astr.image_rect.x, astr.image_rect.y))
+                self.active_asteroids.append(asteroid.Asteroid(self._screen, astr.size - 1,
+                                                               astr.image_rect.x, astr.image_rect.y))
             del self.active_asteroids[i]
 
     def rocket_hit_asteroid(self):
