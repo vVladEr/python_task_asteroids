@@ -4,7 +4,10 @@ import gameObjectsLogic
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
 done = False
-a = screen.get_rect().width
+
+
+pygame.font.init()
+f = pygame.font.SysFont('arial', 48)
 
 
 clock = pygame.time.Clock()
@@ -28,10 +31,11 @@ while not done:
 
     screen.fill((0, 0, 0))
     rocket.get_next_frame_coordinates()
-    objects.update_bullets()
-    objects.update_asteroids()
-    objects.bullet_hit_asteroid()
-    done = objects.rocket_hit_asteroid()
+    score_text = f.render(f"{rocket.score}", True, (255, 255, 255))
+    screen.blit(score_text, (10, 10))
+    objects.update()
+    if not done:
+        done = objects.rocket_hit_asteroid()
     pygame.display.flip()
     clock.tick(60)
 

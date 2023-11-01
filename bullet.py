@@ -10,20 +10,21 @@ def _get_distance(x1, y1, x2, y2):
 
 
 class Bullet:
-    def __init__(self, x, y, moving_angle, screen_size):
+    def __init__(self, x, y, moving_angle, screen_size, rocket_fired):
         self.spawn_point_x = x
         self.spawn_point_y = y
         self.cur_x = x
         self.cur_y = y
         self.moving_angle = moving_angle
         self.speed = 10
-        self.max_distance = 400
+        self.max_distance = 600
         self._radius = 4
         self._cross_top = False
         self._cross_right = False
         self._cross_bottom = False
         self._cross_left = False
         self._screen_size = screen_size
+        self.rocket_fired = rocket_fired
 
     def update(self, screen):
         self.cur_x += self.speed * math.cos(self._get_angle_in_radians())

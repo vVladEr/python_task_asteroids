@@ -16,11 +16,11 @@ class Rocket:
         self.score = 0
 
     def turn_right(self):
-        self.rotation_angle -= 2
+        self.rotation_angle -= 3
         self.rotate_rocket_image()
 
     def turn_left(self):
-        self.rotation_angle += 2
+        self.rotation_angle += 3
         self.rotate_rocket_image()
 
     def rotate_rocket_image(self):
