@@ -24,6 +24,7 @@ class GameObjectsLogic:
         self._time_ufo_was_destroyed = 0
         self._last_time_ufo_fired = 0
         self.ufo = None
+        self.rocket_destroyed = False
 
     def update(self):
         self.spawn_ufo()
@@ -31,7 +32,7 @@ class GameObjectsLogic:
         self.ufo_fire()
         self.update_bullets()
         self.update_asteroids()
-        self.bullet_hit_asteroid()
+        self.bullet_hit_smth()
         self.bullet_hit_ufo()
         self.ufo_hit_asteroid()
         self.rocket_hit_asteroid()
@@ -78,35 +79,56 @@ class GameObjectsLogic:
         if self.ufo:
             self.ufo.update()
 
-    def bullet_hit_asteroid(self):
+    def bullet_hit_smth(self):
         bul_to_destroy = set()
-        astr_to_destroy = set()
+        aster_to_destroy = set()
         for i in range(len(self.active_bullets)):
             for j in range(len(self.active_asteroids)):
-                if j in astr_to_destroy:
+                if j in aster_to_destroy:
                     continue
                 if self.active_asteroids[j].image_rect.collidepoint(self.active_bullets[i].cur_x,
                                                                     self.active_bullets[i].cur_y):
                     if self.active_bullets[i].rocket_fired:
                         self.rocket.score += 10
                     bul_to_destroy.add(i)
-                    astr_to_destroy.add(j)
-        for i in bul_to_destroy:
+                    aster_to_destroy.add(j)
+            if i not in bul_to_destroy:
+                if self.ufo is not None and \
+                    self.active_bullets[i].rocket_fired and \
+                    self.ufo.image_rect.collidepoint(self.active_bullets[i].cur_x,
+                                                     self.active_bullets[i].cur_y):
+                    self._time_ufo_was_destroyed = pygame.time.get_ticks()
+                    self.ufo = None
+                    self.rocket.score += 20
+                elif not self.active_bullets[i].rocket_fired and \
+                    self.rocket.image_rect.collidepoint(self.active_bullets[i].cur_x,
+                                                        self.active_bullets[i].cur_y):
+                    self.rocket_destroyed = True
+
+        self._clear_bullets(bul_to_destroy)
+        self._clear_aster(aster_to_destroy)
+
+    def _clear_bullets(self, bul_indexes):
+        for i in bul_indexes:
             del self.active_bullets[i]
-        for i in astr_to_destroy:
-            astr = self.active_asteroids[i]
-            if astr.size > 0:
-                self.active_asteroids.append(asteroid.Asteroid(self._screen, astr.size - 1,
-                                                               astr.image_rect.x, astr.image_rect.y))
-                self.active_asteroids.append(asteroid.Asteroid(self._screen, astr.size - 1,
-                                                               astr.image_rect.x, astr.image_rect.y))
+
+    def _clear_aster(self, aster_indexes):
+        for i in aster_indexes:
+            aster = self.active_asteroids[i]
+            if aster.size > 0:
+                self.active_asteroids.append(asteroid.Asteroid(self._screen, aster.size - 1,
+                                                               aster.image_rect.x, aster.image_rect.y))
+                self.active_asteroids.append(asteroid.Asteroid(self._screen, aster.size - 1,
+                                                               aster.image_rect.x, aster.image_rect.y))
             del self.active_asteroids[i]
 
     def rocket_hit_asteroid(self):
+        if self.ufo is not None and self.rocket.image_rect.colliderect(self.ufo.image_rect):
+            self.rocket_destroyed = True
+            return
         for aster in self.active_asteroids:
             if self.rocket.image_rect.colliderect(aster.image_rect):
-                return True
-        return False
+                self.rocket_destroyed = True
 
     def bullet_hit_ufo(self):
         if self.ufo is not None:

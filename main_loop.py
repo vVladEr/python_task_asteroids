@@ -35,7 +35,7 @@ while not done:
     screen.blit(score_text, (10, 10))
     objects.update()
     if not done:
-        done = objects.rocket_hit_asteroid()
+        done = objects.rocket_destroyed
     pygame.display.flip()
     clock.tick(60)
 
