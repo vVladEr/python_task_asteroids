@@ -25,17 +25,19 @@ class GameObjectsLogic:
         self._last_time_ufo_fired = 0
         self.ufo = None
         self.rocket_destroyed = False
+        self.lives = 3
 
     def update(self):
         self.spawn_ufo()
+        self.update_rocket()
         self.update_ufo()
-        self.ufo_fire()
         self.update_bullets()
         self.update_asteroids()
+        self.ufo_fire()
         self.bullet_hit_smth()
         self.bullet_hit_ufo()
         self.ufo_hit_asteroid()
-        self.rocket_hit_asteroid()
+        self.rocket_hit_other_obj()
 
     def fire(self):
         if pygame.time.get_ticks() - self._last_time_rocket_fired >= 300:
@@ -60,6 +62,17 @@ class GameObjectsLogic:
         if self.ufo is None and pygame.time.get_ticks() - self._time_ufo_was_destroyed >= 15000:
             self.ufo = ufo.UFO(screen=self._screen)
             self._last_time_ufo_fired = pygame.time.get_ticks()
+
+    def update_rocket(self):
+        if self.lives >= 1 and self.rocket_destroyed:
+            self.rocket.respawn()
+            self.lives -= 1
+            self.rocket_destroyed = False
+        elif self.rocket.is_invincible():
+            if pygame.time.get_ticks() % 4:
+                self._screen.blit(self.rocket.rotated_image, self.rocket.rotated_rect)
+        else:
+            self._screen.blit(self.rocket.rotated_image, self.rocket.rotated_rect)
 
     def update_bullets(self):
         far_bullets = []
@@ -100,7 +113,7 @@ class GameObjectsLogic:
                     self._time_ufo_was_destroyed = pygame.time.get_ticks()
                     self.ufo = None
                     self.rocket.score += 20
-                elif not self.active_bullets[i].rocket_fired and \
+                elif not self.rocket.is_invincible() and not self.active_bullets[i].rocket_fired and \
                     self.rocket.image_rect.collidepoint(self.active_bullets[i].cur_x,
                                                         self.active_bullets[i].cur_y):
                     self.rocket_destroyed = True
@@ -122,10 +135,12 @@ class GameObjectsLogic:
                                                                aster.image_rect.x, aster.image_rect.y))
             del self.active_asteroids[i]
 
-    def rocket_hit_asteroid(self):
+    def rocket_hit_other_obj(self):
+        if self.rocket.is_invincible():
+            pass
         if self.ufo is not None and self.rocket.image_rect.colliderect(self.ufo.image_rect):
             self.rocket_destroyed = True
-            return
+            pass
         for aster in self.active_asteroids:
             if self.rocket.image_rect.colliderect(aster.image_rect):
                 self.rocket_destroyed = True

@@ -31,11 +31,13 @@ while not done:
 
     screen.fill((0, 0, 0))
     rocket.get_next_frame_coordinates()
-    score_text = f.render(f"{rocket.score}", True, (255, 255, 255))
+    score_text = f.render(f"Score:{rocket.score}", True, (255, 255, 255))
+    lives_text = f.render(f"Lives:{objects.lives}", True, (255, 255, 255))
     screen.blit(score_text, (10, 10))
+    screen.blit(lives_text, (10, 60))
     objects.update()
     if not done:
-        done = objects.rocket_destroyed
+        done = objects.lives == 0
     pygame.display.flip()
     clock.tick(60)
 
