@@ -10,9 +10,9 @@ class GameObjectsLogic:
         self._screen = screen
         self.rocket = rocket.Rocket(400, 300, screen)
         self.active_bullets = []
-        self.active_asteroids = [asteroid.Asteroid(self._screen, 0, random.randint(0, screen.get_rect().width),
+        self.active_asteroids = [asteroid.Asteroid(self._screen, 2, random.randint(0, screen.get_rect().width),
                                                    random.randint(0, screen.get_rect().height)),
-                                 asteroid.Asteroid(self._screen, 1, random.randint(0, screen.get_rect().width),
+                                 asteroid.Asteroid(self._screen, 2, random.randint(0, screen.get_rect().width),
                                                    random.randint(0, screen.get_rect().height)),
                                  asteroid.Asteroid(self._screen, 2, random.randint(0, screen.get_rect().width),
                                                    random.randint(0, screen.get_rect().height))]

@@ -2,9 +2,6 @@ import math
 import pygame
 import random
 
-width = 800
-height = 600
-
 
 class Asteroid:
     def __init__(self, screen, size, pos_x, pos_y):
@@ -13,14 +10,14 @@ class Asteroid:
         self._scale = 0
         self.size = size
         self._set_speed_and_scale(size)
-        self.image = pygame.image.load("rocket.png").convert_alpha()
+        self.image = pygame.image.load(f"pictures/asteroid{random.randint(1,4)}.png").convert_alpha()
         self.image = pygame.transform.scale_by(self.image, self._scale)
         self.image_rect = self.image.get_rect(center=(pos_x, pos_y))
         self._moving_angle = random.randint(0, 360)
 
     def _set_speed_and_scale(self, size):
         self._speed = 2 ** (2-size)
-        self._scale = 0.5 + size * 0.25
+        self._scale = 0.4 + size * 0.3
 
     def update(self):
         self.image_rect.y -= self._speed * math.sin(self._get_angle_in_radians())

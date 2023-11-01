@@ -8,7 +8,7 @@ class Rocket:
         self._screen = screen
         self.moving_angle = 0
         self.rotation_angle = 0
-        self.image = pygame.image.load("rocket.png").convert_alpha()
+        self.image = pygame.image.load("pictures/rocket.png").convert_alpha()
         self.rotated_rect = self.image.get_rect(center=(start_x, start_y))
         self.image_rect = self.image.get_rect(center=(start_x, start_y))
         self.rotated_image = self.image
