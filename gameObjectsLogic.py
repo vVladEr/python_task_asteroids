@@ -4,27 +4,26 @@ import pygame
 import asteroid
 import random
 
-width = 800
-height = 600
 
 class GameObjectsLogic:
     def __init__(self, screen):
         self._screen = screen
-        self.rocket = rocket.Rocket(400, 300)
+        self.rocket = rocket.Rocket(400, 300, screen)
         self.active_bullets = []
-        self.active_asteroids = [asteroid.Asteroid(self._screen, 0, random.randint(0, width),
-                                                   random.randint(0, height)),
-                                 asteroid.Asteroid(self._screen, 1, random.randint(0, width),
-                                                   random.randint(0, height)),
-                                 asteroid.Asteroid(self._screen, 2, random.randint(0, width),
-                                                   random.randint(0, height))]
+        self.active_asteroids = [asteroid.Asteroid(self._screen, 0, random.randint(0, screen.get_rect().width),
+                                                   random.randint(0, screen.get_rect().height)),
+                                 asteroid.Asteroid(self._screen, 1, random.randint(0, screen.get_rect().width),
+                                                   random.randint(0, screen.get_rect().height)),
+                                 asteroid.Asteroid(self._screen, 2, random.randint(0, screen.get_rect().width),
+                                                   random.randint(0, screen.get_rect().height))]
         self._last_time_fired = 0
 
     def fire(self):
         if pygame.time.get_ticks() - self._last_time_fired >= 300:
             self.active_bullets.append(bullet.Bullet(self.rocket.rotated_rect.centerx,
                                                      self.rocket.rotated_rect.centery,
-                                                     self.rocket.rotation_angle))
+                                                     self.rocket.rotation_angle,
+                                                     self._screen.get_rect().size))
             self._last_time_fired = pygame.time.get_ticks()
 
     def update_bullets(self):

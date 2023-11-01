@@ -4,6 +4,7 @@ import gameObjectsLogic
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
 done = False
+a = screen.get_rect().width
 
 
 clock = pygame.time.Clock()
@@ -28,7 +29,7 @@ while not done:
     objects.bullet_hit_asteroid()
     done = objects.rocket_hit_asteroid()
 
-    screen.blit(rocket.rotated_image, rocket.rotated_rect)
+
 
     pygame.display.flip()
     clock.tick(60)

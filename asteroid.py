@@ -20,7 +20,7 @@ class Asteroid:
 
     def _set_speed_and_scale(self, size):
         self._speed = 2 ** (2-size)
-        self._scale = 2 ** -(2-size)
+        self._scale = 0.5 + size * 0.25
 
     def update(self):
         self.image_rect.y -= self._speed * math.sin(self._get_angle_in_radians())
@@ -32,11 +32,11 @@ class Asteroid:
         return self._moving_angle / 360 * 2 * math.pi
 
     def _fix_out_of_borders(self):
-        if self.image_rect.x >= width:
+        if self.image_rect.x >= self._screen.get_rect().width:
             self.image_rect.x = -self.image.get_rect().size[0]
         elif self.image_rect.right <= 0:
-            self.image_rect.x = width
-        if self.image_rect.top >= height:
+            self.image_rect.x = self._screen.get_rect().width
+        if self.image_rect.top >= self._screen.get_rect().height:
             self.image_rect.top = -self.image.get_rect().size[1]
         elif self.image_rect.bottom <= 0:
-            self.image_rect.top = height
+            self.image_rect.top = self._screen.get_rect().height

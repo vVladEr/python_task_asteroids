@@ -2,13 +2,10 @@ import math
 import pygame
 
 
-width = 800
-height = 600
-
-
 class Rocket:
-    def __init__(self, start_x, start_y):
+    def __init__(self, start_x, start_y, screen):
         self.speed = 0
+        self._screen = screen
         self.moving_angle = 0
         self.rotation_angle = 0
         self.image = pygame.image.load("rocket.png").convert_alpha()
@@ -49,22 +46,23 @@ class Rocket:
         self.image_rect.y -= self.speed * math.sin(self._get_angle_in_radians())
         self._fix_out_of_borders()
         self.fade_speed()
+        self._screen.blit(self.rotated_image, self.rotated_rect)
 
     def _get_angle_in_radians(self):
         return self.moving_angle / 360 * 2 * math.pi
 
     def _fix_out_of_borders(self):
-        if self.image_rect.x >= width:
+        if self.image_rect.x >= self._screen.get_rect().width:
             self.image_rect.x = -self.image.get_rect().size[0]
             self.rotated_rect.x = -self.rotated_image.get_rect().size[0]
         elif self.image_rect.right <= 0:
-            self.image_rect.x = width
-            self.rotated_rect.x = width
-        if self.image_rect.top >= height:
+            self.image_rect.x = self._screen.get_rect().width
+            self.rotated_rect.x = self._screen.get_rect().width
+        if self.image_rect.top >= self._screen.get_rect().height:
             self.image_rect.top = -self.image.get_rect().size[1]
             self.rotated_rect.top = -self.rotated_image.get_rect().size[1]
         elif self.image_rect.bottom <= 0:
-            self.image_rect.top = height
-            self.rotated_rect.top = height
+            self.image_rect.top = self._screen.get_rect().height
+            self.rotated_rect.top = self._screen.get_rect().height
 
 
