@@ -73,6 +73,7 @@ class Rocket:
         self.image_rect = self.image.get_rect(center=(self._start_x, self._start_y))
         self.moving_angle = 0
         self.rotation_angle = 0
+        self.rotate_rocket_image()
         self.speed = 0
         self._invincible_time_start = pygame.time.get_ticks()
 

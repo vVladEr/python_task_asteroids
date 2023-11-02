@@ -68,11 +68,13 @@ class GameObjectsLogic:
             self.rocket.respawn()
             self.lives -= 1
             self.rocket_destroyed = False
-        elif self.rocket.is_invincible():
-            if pygame.time.get_ticks() % 4:
-                self._screen.blit(self.rocket.rotated_image, self.rocket.rotated_rect)
         else:
-            self._screen.blit(self.rocket.rotated_image, self.rocket.rotated_rect)
+            self.rocket.get_next_frame_coordinates()
+            if self.rocket.is_invincible():
+                if pygame.time.get_ticks() % 4:
+                    self._screen.blit(self.rocket.rotated_image, self.rocket.rotated_rect)
+            else:
+                self._screen.blit(self.rocket.rotated_image, self.rocket.rotated_rect)
 
     def update_bullets(self):
         far_bullets = []
