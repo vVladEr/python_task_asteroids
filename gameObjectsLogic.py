@@ -115,30 +115,34 @@ class GameObjectsLogic:
                     self._time_ufo_was_destroyed = pygame.time.get_ticks()
                     self.ufo = None
                     self.rocket.score += 20
-                elif not self.rocket.is_invincible() and not self.active_bullets[i].rocket_fired and \
-                    self.rocket.image_rect.collidepoint(self.active_bullets[i].cur_x,
-                                                        self.active_bullets[i].cur_y):
+                elif not (self.rocket.is_invincible() or self.rocket_destroyed) and\
+                        not self.active_bullets[i].rocket_fired and \
+                        self.rocket.image_rect.collidepoint(self.active_bullets[i].cur_x,
+                                                            self.active_bullets[i].cur_y):
                     self.rocket_destroyed = True
 
         self._clear_bullets(bul_to_destroy)
         self._clear_aster(aster_to_destroy)
 
     def _clear_bullets(self, bul_indexes):
-        for i in bul_indexes:
-            del self.active_bullets[i]
+        bi = list(bul_indexes)
+        bi.sort(reverse=True)
+        for i in bi:
+            self.active_bullets.pop(i)
 
     def _clear_aster(self, aster_indexes):
-        for i in aster_indexes:
-            aster = self.active_asteroids[i]
+        ai = list(aster_indexes)
+        ai.sort(reverse=True)
+        for i in ai:
+            aster = self.active_asteroids.pop(i)
             if aster.size > 0:
                 self.active_asteroids.append(asteroid.Asteroid(self._screen, aster.size - 1,
                                                                aster.image_rect.x, aster.image_rect.y))
                 self.active_asteroids.append(asteroid.Asteroid(self._screen, aster.size - 1,
                                                                aster.image_rect.x, aster.image_rect.y))
-            del self.active_asteroids[i]
 
     def rocket_hit_other_obj(self):
-        if self.rocket.is_invincible():
+        if self.rocket.is_invincible() or self.rocket_destroyed:
             pass
         if self.ufo is not None and self.rocket.image_rect.colliderect(self.ufo.image_rect):
             self.rocket_destroyed = True
@@ -160,7 +164,7 @@ class GameObjectsLogic:
                     self.rocket.score += 20
                     break
             if bul_to_destroy != -1:
-                del self.active_bullets[bul_to_destroy]
+                self.active_bullets.pop(bul_to_destroy)
 
     def ufo_hit_asteroid(self):
         if self.ufo is not None:
@@ -172,4 +176,4 @@ class GameObjectsLogic:
                     aster_to_destroy = i
                     break
             if aster_to_destroy != -1:
-                del self.active_asteroids[aster_to_destroy]
+                self.active_asteroids.pop(aster_to_destroy)
