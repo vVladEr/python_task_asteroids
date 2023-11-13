@@ -17,7 +17,7 @@ class Rocket:
         self._start_x = start_x
         self._start_y = start_y
         self._invincible_time_start = pygame.time.get_ticks()
-        self._invincible_time = 1000
+        self._invincible_time = 2000
 
     def turn_right(self):
         self.rotation_angle -= 3
@@ -75,7 +75,10 @@ class Rocket:
         self.rotation_angle = 0
         self.rotate_rocket_image()
         self.speed = 0
-        self._invincible_time_start = pygame.time.get_ticks()
+        self.make_invincible()
 
     def is_invincible(self):
-        return pygame.time.get_ticks() - self._invincible_time_start <= self._invincible_time
+        return (pygame.time.get_ticks() - self._invincible_time_start) <= self._invincible_time
+
+    def make_invincible(self):
+        self._invincible_time_start = pygame.time.get_ticks()
