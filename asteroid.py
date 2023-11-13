@@ -16,7 +16,7 @@ class Asteroid:
         self._moving_angle = random.randint(0, 360)
 
     def _set_speed_and_scale(self, size):
-        self._speed = 2 ** (2-size)
+        self._speed = 2 ** (2-size) + 1
         self._scale = 0.4 + size * 0.3
 
     def update(self):
