@@ -20,6 +20,7 @@ class Game:
 
     # region GAME_SCENE
     def _game_scene(self):
+        self._final_score = 0
         self._screen.fill(BLACK)
         f = pygame.font.SysFont('arial', 48)
         objects = gameObjectsLogic.GameObjectsLogic(self._screen)
@@ -51,7 +52,7 @@ class Game:
                 self._final_score = rocket.score
                 self._switch_scene(self._end_scene)
             pygame.display.flip()
-            self._clock.tick(60)
+            pygame.time.Clock().tick(60)
     # endregion
 
     # region END_SCENE
@@ -80,7 +81,7 @@ class Game:
                     if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                         if event.ui_element == restart_button:
                             done = True
-                            self._switch_scene(self._game_scene())
+                            self._switch_scene(self._game_scene)
                 gui_manager.process_events(event)
             gui_manager.draw_ui(self._screen)
             pygame.display.flip()

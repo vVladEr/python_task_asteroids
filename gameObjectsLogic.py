@@ -20,9 +20,9 @@ class GameObjectsLogic:
                                  asteroid.Asteroid(self._screen, 2,
                                                    random.randint(0, screen.get_rect().width),
                                                    random.randint(0, screen.get_rect().height))]
-        self._last_time_rocket_fired = 0
-        self._time_ufo_was_destroyed = 0
-        self._last_time_ufo_fired = 0
+        self._last_time_rocket_fired = pygame.time.get_ticks()
+        self._time_ufo_was_destroyed = pygame.time.get_ticks()
+        self._last_time_ufo_fired = pygame.time.get_ticks()
         self._amount_asteroids = len(self.active_asteroids)
         self.ufo = None
         self.rocket_destroyed = False
@@ -39,8 +39,7 @@ class GameObjectsLogic:
         self._bullet_hit_ufo()
         self._ufo_hit_asteroid()
         self._rocket_hit_other_obj()
-        print(len(self.active_asteroids))
-        if not len(self.active_asteroids):
+        if len(self.active_asteroids) == 0:
             self._level_restart()
 
     def _level_restart(self):
