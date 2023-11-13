@@ -1,4 +1,5 @@
 import pygame
+import pygame_gui
 import gameObjectsLogic
 
 pygame.init()
@@ -19,6 +20,7 @@ class Game:
 
     # region GAME_SCENE
     def _game_scene(self):
+        self._screen.fill(BLACK)
         f = pygame.font.SysFont('arial', 48)
         objects = gameObjectsLogic.GameObjectsLogic(self._screen)
         rocket = objects.rocket
@@ -50,7 +52,7 @@ class Game:
                 self._switch_scene(self._end_scene)
             pygame.display.flip()
             self._clock.tick(60)
-        # endregion
+    # endregion
 
     # region END_SCENE
     def _write_endgame_text(self):
@@ -59,21 +61,34 @@ class Game:
         score_text = f.render(f"Your score is {self._final_score}", True, WHITE)
         game_over_text = f.render("GAME OVER", True, WHITE)
         self._screen.blit(game_over_text, (WIDTH // 2 - 160, HEIGHT // 2 - 60))
-        self._screen.blit(score_text, (WIDTH // 2 - 180, HEIGHT // 2))
+        self._screen.blit(score_text, (WIDTH // 2 - 170, HEIGHT // 2))
         pygame.display.flip()
 
     def _end_scene(self):
         self._write_endgame_text()
+        gui_manager = pygame_gui.UIManager(SIZE)
+        restart_button = pygame_gui.elements.UIButton(
+            relative_rect=pygame.Rect((WIDTH // 2 - 75, HEIGHT // 2 + 80), (150, 50)),
+            text='Back to menu',
+            manager=gui_manager)
         done = False
         while not done:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
+                if event.type == pygame.USEREVENT:
+                    if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                        if event.ui_element == restart_button:
+                            done = True
+                            self._switch_scene(self._game_scene())
+                gui_manager.process_events(event)
+            gui_manager.draw_ui(self._screen)
             pygame.display.flip()
+            gui_manager.update(pygame.time.Clock().tick(60))
     # endregion
 
     def run(self):
-        self._switch_scene(self._game_scene())
+        self._switch_scene(self._game_scene)
         while self._current_scene is not None:
             self._current_scene()
         pygame.quit()
