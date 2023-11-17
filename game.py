@@ -196,7 +196,7 @@ class Game:
     # endregion
 
     def run(self):
-        self._switch_scene(self._end_scene)
+        self._switch_scene(self._start_menu_scene)
         while self._current_scene is not None:
             self._current_scene()
         pygame.quit()

@@ -13,13 +13,8 @@ class GameObjectsLogic:
         self.active_bullets = []
         self.active_asteroids = [asteroid.Asteroid(self._screen, 2,
                                                    random.randint(0, screen.get_rect().width),
-                                                   random.randint(0, screen.get_rect().height)),
-                                 asteroid.Asteroid(self._screen, 2,
-                                                   random.randint(0, screen.get_rect().width),
-                                                   random.randint(0, screen.get_rect().height)),
-                                 asteroid.Asteroid(self._screen, 2,
-                                                   random.randint(0, screen.get_rect().width),
                                                    random.randint(0, screen.get_rect().height))]
+
         self._last_time_rocket_fired = pygame.time.get_ticks()
         self._time_ufo_was_destroyed = pygame.time.get_ticks()
         self._last_time_ufo_fired = pygame.time.get_ticks()
