@@ -21,11 +21,19 @@ class Game:
         self._current_scene = scene
 
     # region GAME_SCENE
+
+    def _draw_rocket(self, rocket):
+        if rocket.is_invincible():
+            if pygame.time.get_ticks() % 4:
+                rocket.draw(self._screen)
+        else:
+            rocket.draw(self._screen)
+
     def _game_scene(self):
         self._final_score = 0
         self._screen.fill(BLACK)
         f = pygame.font.SysFont('arial', 48)
-        objects = gameObjectsLogic.GameObjectsLogic(self._screen)
+        objects = gameObjectsLogic.GameObjectsLogic(self._screen.get_size())
         rocket = objects.rocket
         done = False
         while not done:
@@ -44,6 +52,10 @@ class Game:
 
             self._screen.fill(BLACK)
             objects.update()
+            self._draw_rocket(rocket)
+            objs_to_draw = objects.get_all_objects()
+            for obj in objs_to_draw:
+                obj.draw(self._screen)
             score_text = f.render(f"Score:{rocket.score}", True, WHITE)
             lives_text = f.render(f"Lives:{objects.lives}", True, WHITE)
             self._screen.blit(score_text, (10, 10))

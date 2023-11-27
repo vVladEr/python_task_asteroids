@@ -20,10 +20,6 @@ class Asteroid(gameObject):
         self._speed = 2 ** (2-size) + 1
         self._scale = 0.4 + size * 0.3
 
-    def update(self, screen_size):
-        self._get_next_frame_coord()
-        self._fix_out_of_borders(screen_size)
-
     def _get_next_frame_coord(self):
         self.image_rect.y -= self._speed * math.sin(get_angle_in_radians(self._moving_angle))
         self.image_rect.x += self._speed * math.cos(get_angle_in_radians(self._moving_angle))

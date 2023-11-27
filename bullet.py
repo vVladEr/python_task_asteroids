@@ -28,10 +28,6 @@ class Bullet(gameObject):
         self._cross_left = False
         self.rocket_fired = rocket_fired
 
-    def update(self, screen_size):
-        self._get_next_frame_coord()
-        self._fix_out_of_borders(screen_size)
-
     def _get_next_frame_coord(self):
         self.cur_x += self.speed * math.cos(get_angle_in_radians(self.moving_angle))
         self.cur_y -= self.speed * math.sin(get_angle_in_radians(self.moving_angle))

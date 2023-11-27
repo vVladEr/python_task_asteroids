@@ -46,8 +46,7 @@ class Rocket(gameObject):
             self._moving_angle = self.rotation_angle
 
     def update(self, screen_size):
-        self._get_next_frame_coord()
-        self._fix_out_of_borders(screen_size)
+        super().update(screen_size)
         self._fade_speed()
 
     def _get_next_frame_coord(self):

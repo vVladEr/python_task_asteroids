@@ -16,10 +16,6 @@ class UFO(gameObject):
         self.image_rect = self.image.get_rect(center=(0, random.randint(0, height)))
         self._moving_angle = random.randint(0, 1) * 180
 
-    def update(self, screen_size):
-        self._get_next_frame_coord()
-        self._fix_out_of_borders(screen_size)
-
     def _get_next_frame_coord(self):
         self.image_rect.y -= self._speed * math.sin(get_angle_in_radians(self._moving_angle))
         self.image_rect.x += self._speed * math.cos(get_angle_in_radians(self._moving_angle))

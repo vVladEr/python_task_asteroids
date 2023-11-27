@@ -7,14 +7,14 @@ import ufo
 
 
 class GameObjectsLogic:
-    def __init__(self, screen):
-        self._screen = screen
+    def __init__(self, screen_size):
+        self.size = self.width, self.height = screen_size
         self.rocket = rocket.Rocket(400, 300)
         self.active_bullets = []
         self.active_asteroids = [asteroid.Asteroid(2,
-                                                   random.randint(0, screen.get_rect().width),
-                                                   random.randint(0, screen.get_rect().height))]
-
+                                                   random.randint(0, self.width),
+                                                   random.randint(0, self.height))]
+        self.active_single_objects = {self.rocket}
         self._last_time_rocket_fired = pygame.time.get_ticks()
         self._time_ufo_was_destroyed = pygame.time.get_ticks()
         self._last_time_ufo_fired = pygame.time.get_ticks()
@@ -22,6 +22,16 @@ class GameObjectsLogic:
         self.ufo = None
         self.rocket_destroyed = False
         self.lives = 3
+
+    def get_all_objects(self):
+        objects = set()
+        for aster in self.active_asteroids:
+            objects.add(aster)
+        for bullet in self.active_bullets:
+            objects.add(bullet)
+        if self.ufo:
+            objects.add(self.ufo)
+        return objects
 
     def update(self):
         self._spawn_ufo()
@@ -31,7 +41,6 @@ class GameObjectsLogic:
         self._update_asteroids()
         self._ufo_fire()
         self._bullet_hit_smth()
-        self._bullet_hit_ufo()
         self._ufo_hit_asteroid()
         self._rocket_hit_other_obj()
         if len(self.active_asteroids) == 0:
@@ -42,8 +51,8 @@ class GameObjectsLogic:
         self.rocket.make_invincible()
         for _ in range(self._amount_asteroids):
             self.active_asteroids.append(asteroid.Asteroid(2,
-                                                           random.randint(0, self._screen.get_rect().width),
-                                                           random.randint(0, self._screen.get_rect().height)))
+                                                           random.randint(0, self.width),
+                                                           random.randint(0, self.height)))
 
     def fire(self):
         if pygame.time.get_ticks() - self._last_time_rocket_fired >= 200:
@@ -64,7 +73,7 @@ class GameObjectsLogic:
 
     def _spawn_ufo(self):
         if self.ufo is None and pygame.time.get_ticks() - self._time_ufo_was_destroyed >= 15000:
-            self.ufo = ufo.UFO(self._screen.get_rect().height)
+            self.ufo = ufo.UFO(self.height)
             self._last_time_ufo_fired = pygame.time.get_ticks()
 
     def _update_rocket(self):
@@ -73,33 +82,25 @@ class GameObjectsLogic:
             self.lives -= 1
             self.rocket_destroyed = False
         else:
-            self.rocket.update(self._screen.get_rect().size)
-            if self.rocket.is_invincible():
-                if pygame.time.get_ticks() % 4:
-                    self.rocket.draw(self._screen)
-            else:
-                self.rocket.draw(self._screen)
+            self.rocket.update(self.size)
 
     def _update_bullets(self):
         far_bullets = []
         for i in range(len(self.active_bullets)):
-            if self.active_bullets[i].is_far_enough(self._screen.get_rect().size):
+            if self.active_bullets[i].is_far_enough(self.size):
                 far_bullets.append(i)
             else:
-                self.active_bullets[i].update(self._screen.get_rect().size)
-                self.active_bullets[i].draw(self._screen)
+                self.active_bullets[i].update(self.size)
         for i in far_bullets:
             del self.active_bullets[i]
 
     def _update_asteroids(self):
         for aster in self.active_asteroids:
-            aster.update(self._screen.get_rect().size)
-            aster.draw(self._screen)
+            aster.update(self.size)
 
     def _update_ufo(self):
         if self.ufo:
-            self.ufo.update(self._screen.get_rect().size)
-            self.ufo.draw(self._screen)
+            self.ufo.update(self.size)
 
     def _bullet_hit_smth(self):
         bul_to_destroy = set()
@@ -158,21 +159,6 @@ class GameObjectsLogic:
             for aster in self.active_asteroids:
                 if self.rocket.image_rect.colliderect(aster.image_rect):
                     self.rocket_destroyed = True
-
-    def _bullet_hit_ufo(self):
-        if self.ufo is not None:
-            bul_to_destroy = -1
-            for i in range(len(self.active_bullets)):
-                if self.active_bullets[i].rocket_fired and \
-                        self.ufo.image_rect.collidepoint(self.active_bullets[i].cur_x,
-                                                         self.active_bullets[i].cur_y):
-                    self._time_ufo_was_destroyed = pygame.time.get_ticks()
-                    bul_to_destroy = i
-                    self.ufo = None
-                    self.rocket.score += 20
-                    break
-            if bul_to_destroy != -1:
-                self.active_bullets.pop(bul_to_destroy)
 
     def _ufo_hit_asteroid(self):
         if self.ufo is not None:
