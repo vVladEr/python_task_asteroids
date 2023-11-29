@@ -1,20 +1,24 @@
 import math
 import pygame
 import random
-from gameObject import gameObject, get_angle_in_radians
+from gameObject import gameObject, get_angle_in_radians, get_path_to_image
 
 
 class Asteroid(gameObject):
-    def __init__(self, size, pos_x, pos_y):
+    def __init__(self, size, pos_x, pos_y, test=False, test_moving_angle=0):
         super().__init__()
         self._speed = 0
         self._scale = 0
         self.size = size
         self._set_speed_and_scale(size)
-        self.image = pygame.image.load(f"pictures/asteroid{random.randint(1,4)}.png").convert_alpha()
+        c = get_path_to_image()
+        self.image = pygame.image.load(f"{'../'*c}pictures/asteroid{random.randint(1,4)}.png").convert_alpha()
         self.image = pygame.transform.scale_by(self.image, self._scale)
         self.image_rect = self.image.get_rect(center=(pos_x, pos_y))
-        self._moving_angle = random.randint(0, 360)
+        if not test:
+            self._moving_angle = random.randint(0, 360)
+        else:
+            self._moving_angle = test_moving_angle
 
     def _set_speed_and_scale(self, size):
         self._speed = 2 ** (2-size) + 1

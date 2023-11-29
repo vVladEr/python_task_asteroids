@@ -1,7 +1,7 @@
 import math
 import pygame
 
-from gameObject import gameObject, get_angle_in_radians
+from gameObject import gameObject, get_angle_in_radians, get_path_to_image
 
 
 class Rocket(gameObject):
@@ -10,7 +10,8 @@ class Rocket(gameObject):
         self.speed = 0
         self._moving_angle = 0
         self.rotation_angle = 0
-        self.image = pygame.image.load("pictures/rocket.png").convert_alpha()
+        c = get_path_to_image()
+        self.image = pygame.image.load(f"{'../' * c}pictures/rocket.png").convert_alpha()
         self.rotated_rect = self.image.get_rect(center=(start_x, start_y))
         self.image_rect = self.image.get_rect(center=(start_x, start_y))
         self.rotated_image = self.image
@@ -56,10 +57,6 @@ class Rocket(gameObject):
         if self._is_enough_fuel(self.fuel_to_speed_up):
             self.speed = min(self.speed + 0.1, 7)
             self._moving_angle = self.rotation_angle
-            if self._moving_angle > self.rotation_angle:
-                self._moving_angle = max(self.rotation_angle, self._moving_angle - 10)
-            elif self._moving_angle < self.rotation_angle:
-                self._moving_angle = min(self.rotation_angle, self._moving_angle + 10)
 
     def _fade_speed(self):
         self.speed = max(self.speed - 0.01, 0)
@@ -127,4 +124,3 @@ class Rocket(gameObject):
 
     def ammo_percent(self):
         return (self.ammo / self.max_ammo) * 100
-

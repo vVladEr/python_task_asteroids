@@ -1,8 +1,20 @@
 import math
+import pathlib
 
 
 def get_angle_in_radians(moving_angle):
     return moving_angle / 360 * 2 * math.pi
+
+
+def get_path_to_image():
+    a = pathlib.Path.cwd().parts
+    counter = 0
+    for i in range(len(a)-1, -1, -1):
+        if a[i] == "python_task_asteroids":
+            break
+        else:
+            counter += 1
+    return counter
 
 
 class gameObject:

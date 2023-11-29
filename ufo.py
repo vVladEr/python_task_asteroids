@@ -2,19 +2,20 @@ import math
 import pygame
 import random
 
-from gameObject import gameObject, get_angle_in_radians
+from gameObject import gameObject, get_angle_in_radians, get_path_to_image
 
 
 class UFO(gameObject):
-    def __init__(self, height):
+    def __init__(self, height, move_right, x=0):
         super().__init__()
         self._scale = 0
         self._scale = 0.4 + random.randint(0, 2) * 0.3
         self._speed = 3
-        self.image = pygame.image.load(f"pictures/ufo.png").convert_alpha()
+        c = get_path_to_image()
+        self.image = pygame.image.load(f"{'../'*c}pictures/ufo.png").convert_alpha()
         self.image = pygame.transform.scale_by(self.image, self._scale)
-        self.image_rect = self.image.get_rect(center=(0, random.randint(0, height)))
-        self._moving_angle = random.randint(0, 1) * 180
+        self.image_rect = self.image.get_rect(center=(x, height))
+        self._moving_angle = move_right * 180
 
     def _get_next_frame_coord(self):
         self.image_rect.y -= self._speed * math.sin(get_angle_in_radians(self._moving_angle))

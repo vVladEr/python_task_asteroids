@@ -1,4 +1,3 @@
-import gameObject
 import rocket
 import bullet
 import pygame
@@ -56,7 +55,7 @@ class GameObjectsLogic:
                                                            random.randint(0, self.height)))
 
     def fire(self):
-        if pygame.time.get_ticks() - self._last_time_rocket_fired >= 200 and self.rocket.is_enough_ammo():
+        if pygame.time.get_ticks() - self._last_time_rocket_fired >= 150 and self.rocket.is_enough_ammo():
             self.active_bullets.append(bullet.Bullet(self.rocket.rotated_rect.centerx,
                                                      self.rocket.rotated_rect.centery,
                                                      self.rocket.rotation_angle,
@@ -75,7 +74,7 @@ class GameObjectsLogic:
 
     def _spawn_ufo(self):
         if self.ufo is None and pygame.time.get_ticks() - self._time_ufo_was_destroyed >= 15000:
-            self.ufo = ufo.UFO(self.height)
+            self.ufo = ufo.UFO(random.randint(0, self.height), random.randint(0,1))
             self._last_time_ufo_fired = pygame.time.get_ticks()
 
     def _update_rocket(self):
@@ -98,7 +97,7 @@ class GameObjectsLogic:
     def _update_bullets(self):
         far_bullets = []
         for i in range(len(self.active_bullets)):
-            if self.active_bullets[i].is_far_enough(self.size):
+            if self.active_bullets[i].is_far_enough():
                 far_bullets.append(i)
             else:
                 self.active_bullets[i].update(self.size)
