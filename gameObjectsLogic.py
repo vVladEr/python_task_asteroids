@@ -1,3 +1,4 @@
+import gameObject
 import rocket
 import bullet
 import pygame
@@ -139,13 +140,11 @@ class GameObjectsLogic:
                 self._time_ufo_was_destroyed = pygame.time.get_ticks()
                 self.ufo = None
                 self.rocket.score += 20
-                bul_to_destroy.add(i)
             elif not self.active_bullets[i].rocket_fired:
                 if not (self.rocket.is_invincible() or self.rocket_destroyed) and \
                         self.rocket.image_rect.collidepoint(self.active_bullets[i].cur_x,
                                                             self.active_bullets[i].cur_y):
                     self.rocket_destroyed = True
-                    bul_to_destroy.add(i)
                 else:
                     obj_to_del = None
                     for obj in self.collectible_objects:
@@ -173,6 +172,16 @@ class GameObjectsLogic:
                     self.rocket.image_rect.colliderect(aster.image_rect):
                 self.rocket_destroyed = True
                 asters_to_del.add(i)
+            else:
+                obj_to_del = None
+                for obj in self.collectible_objects:
+                    if aster.image_rect.colliderect(obj.image_rect):
+                        asters_to_del.add(i)
+                        obj_to_del = obj
+                        break
+                if obj_to_del:
+                    self.collectible_objects.remove(obj_to_del)
+
         self._clear_aster(asters_to_del, total_destroy=True)
 
     def _clear_bullets(self, bul_indexes):
