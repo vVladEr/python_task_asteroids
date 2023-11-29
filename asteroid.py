@@ -24,9 +24,6 @@ class Asteroid(gameObject):
         self.image_rect.y -= self._speed * math.sin(get_angle_in_radians(self._moving_angle))
         self.image_rect.x += self._speed * math.cos(get_angle_in_radians(self._moving_angle))
 
-    def _get_angle_in_radians(self):
-        return self._moving_angle / 360 * 2 * math.pi
-
     def _fix_out_of_borders(self, screen_size):
         if self.image_rect.x >= screen_size[0]:
             self.image_rect.x = -self.image.get_rect().size[0]

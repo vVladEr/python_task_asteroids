@@ -4,17 +4,18 @@ import pygame
 import asteroid
 import random
 import ufo
+import supply_capsule
 
 
 class GameObjectsLogic:
-    def __init__(self, screen_size):
+    def __init__(self, screen_size, hard_mode=False):
         self.size = self.width, self.height = screen_size
-        self.rocket = rocket.Rocket(400, 300)
+        self.rocket = rocket.Rocket(400, 300, hard_mode)
         self.active_bullets = []
         self.active_asteroids = [asteroid.Asteroid(2,
                                                    random.randint(0, self.width),
                                                    random.randint(0, self.height))]
-        self.active_static_objects = {}
+        self.collectible_objects = set()
         self._last_time_rocket_fired = pygame.time.get_ticks()
         self._time_ufo_was_destroyed = pygame.time.get_ticks()
         self._last_time_ufo_fired = pygame.time.get_ticks()
@@ -22,6 +23,8 @@ class GameObjectsLogic:
         self.ufo = None
         self.rocket_destroyed = False
         self.lives = 3
+        self._capsule_timeout = 3000
+        self._last_time_capsule_spawned = pygame.time.get_ticks()
 
     def get_all_objects(self):
         objects = set()
@@ -31,6 +34,8 @@ class GameObjectsLogic:
             objects.add(bullet)
         if self.ufo:
             objects.add(self.ufo)
+        for obj in self.collectible_objects:
+            objects.add(obj)
         return objects
 
     def update(self):
@@ -50,12 +55,13 @@ class GameObjectsLogic:
                                                            random.randint(0, self.height)))
 
     def fire(self):
-        if pygame.time.get_ticks() - self._last_time_rocket_fired >= 200:
+        if pygame.time.get_ticks() - self._last_time_rocket_fired >= 200 and self.rocket.is_enough_ammo():
             self.active_bullets.append(bullet.Bullet(self.rocket.rotated_rect.centerx,
                                                      self.rocket.rotated_rect.centery,
                                                      self.rocket.rotation_angle,
                                                      True))
             self._last_time_rocket_fired = pygame.time.get_ticks()
+            self.rocket.fire()
 
     def _ufo_fire(self):
         if self.ufo is not None:
@@ -79,6 +85,14 @@ class GameObjectsLogic:
         else:
             self.rocket.update(self.size)
             self._rocket_hit_other_obj()
+            self._add_supply_capsule()
+
+    def _add_supply_capsule(self):
+        if len(self.collectible_objects) < 2 and \
+                pygame.time.get_ticks() - self._last_time_capsule_spawned >= self._capsule_timeout:
+            if self.rocket.fuel_percent() < 40 or self.rocket.ammo_percent() < 40:
+                self._last_time_capsule_spawned = pygame.time.get_ticks()
+                self.collectible_objects.add(supply_capsule.SupplyCapsule(self.size))
 
     def _update_bullets(self):
         far_bullets = []
@@ -125,11 +139,23 @@ class GameObjectsLogic:
                 self._time_ufo_was_destroyed = pygame.time.get_ticks()
                 self.ufo = None
                 self.rocket.score += 20
-            elif not (self.rocket.is_invincible() or self.rocket_destroyed) and \
-                    not self.active_bullets[i].rocket_fired and \
-                    self.rocket.image_rect.collidepoint(self.active_bullets[i].cur_x,
-                                                        self.active_bullets[i].cur_y):
-                self.rocket_destroyed = True
+                bul_to_destroy.add(i)
+            elif not self.active_bullets[i].rocket_fired:
+                if not (self.rocket.is_invincible() or self.rocket_destroyed) and \
+                        self.rocket.image_rect.collidepoint(self.active_bullets[i].cur_x,
+                                                            self.active_bullets[i].cur_y):
+                    self.rocket_destroyed = True
+                    bul_to_destroy.add(i)
+                else:
+                    obj_to_del = None
+                    for obj in self.collectible_objects:
+                        if obj.image_rect.collidepoint(self.active_bullets[i].cur_x,
+                                                       self.active_bullets[i].cur_y):
+                            bul_to_destroy.add(i)
+                            obj_to_del = obj
+                            break
+                    if obj_to_del:
+                        self.collectible_objects.remove(obj_to_del)
 
         self._clear_bullets(bul_to_destroy)
         self._clear_aster(aster_to_destroy)
@@ -171,4 +197,14 @@ class GameObjectsLogic:
             pass
         elif self.ufo is not None and self.rocket.image_rect.colliderect(self.ufo.image_rect):
             self.rocket_destroyed = True
+        else:
+            obj_to_del = None
+            for obj in self.collectible_objects:
+                if isinstance(obj, supply_capsule.SupplyCapsule)\
+                        and self.rocket.image_rect.colliderect(obj.image_rect):
+                    self.rocket.resupply(True, True)
+                    obj_to_del = obj
+                    break
+            if obj_to_del:
+                self.collectible_objects.remove(obj_to_del)
 

@@ -16,6 +16,7 @@ class Game:
         self._clock = pygame.time.Clock()
         self._final_score = 0
         self._record_table = game_records.GameStatistics("records")
+        self._hard_mode = True
 
     def _switch_scene(self, scene):
         self._current_scene = scene
@@ -29,11 +30,20 @@ class Game:
         else:
             rocket.draw(self._screen)
 
+    def _draw_rocket_params(self, rocket):
+        if self._hard_mode:
+            ammo_image = pygame.image.load("pictures/ammo.png").convert_alpha()
+            fuel_image = pygame.image.load("pictures/fuel.png").convert_alpha()
+            self._screen.blit(ammo_image, ammo_image.get_rect(top=600, left=5))
+            self._screen.blit(fuel_image, fuel_image.get_rect(top=640, left=5))
+            pygame.draw.rect(self._screen, WHITE, pygame.Rect((40, 600), (150 * (rocket.ammo / rocket.max_ammo), 30)))
+            pygame.draw.rect(self._screen, WHITE, pygame.Rect((40, 640), (150 * (rocket.fuel / rocket.max_fuel), 30)))
+
     def _game_scene(self):
         self._final_score = 0
         self._screen.fill(BLACK)
         f = pygame.font.SysFont('arial', 48)
-        objects = gameObjectsLogic.GameObjectsLogic(self._screen.get_size())
+        objects = gameObjectsLogic.GameObjectsLogic(self._screen.get_size(), hard_mode=self._hard_mode)
         rocket = objects.rocket
         done = False
         while not done:
@@ -53,6 +63,7 @@ class Game:
             self._screen.fill(BLACK)
             objects.update()
             self._draw_rocket(rocket)
+            self._draw_rocket_params(rocket)
             objs_to_draw = objects.get_all_objects()
             for obj in objs_to_draw:
                 obj.draw(self._screen)
