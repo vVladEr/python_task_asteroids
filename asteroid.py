@@ -11,8 +11,7 @@ class Asteroid(gameObject):
         self._scale = 0
         self.size = size
         self._set_speed_and_scale(size)
-        c = get_path_to_image()
-        self.image = pygame.image.load(f"{'../'*c}pictures/asteroid{random.randint(1,4)}.png").convert_alpha()
+        self.image = pygame.image.load(get_path_to_image(f"asteroid{random.randint(1,4)}.png")).convert_alpha()
         self.image = pygame.transform.scale_by(self.image, self._scale)
         self.image_rect = self.image.get_rect(center=(pos_x, pos_y))
         if not test:

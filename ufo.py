@@ -11,8 +11,7 @@ class UFO(gameObject):
         self._scale = 0
         self._scale = 0.4 + random.randint(0, 2) * 0.3
         self._speed = 3
-        c = get_path_to_image()
-        self.image = pygame.image.load(f"{'../'*c}pictures/ufo.png").convert_alpha()
+        self.image = pygame.image.load(get_path_to_image("ufo.png")).convert_alpha()
         self.image = pygame.transform.scale_by(self.image, self._scale)
         self.image_rect = self.image.get_rect(center=(x, height))
         self._moving_angle = move_right * 180

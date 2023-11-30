@@ -93,6 +93,15 @@ class TestGameObjectLogic(unittest.TestCase):
         self.assertEqual(0, len(game_objects.active_asteroids))
         self.assertEqual(0, game_objects.rocket.score)
 
+    def testUFOBUlletHitCapsule(self):
+        game_objects = gameObjectsLogic.GameObjectsLogic(SIZE, hard_mode=True)
+        game_objects.active_asteroids.clear()
+        game_objects.active_bullets.append(bullet.Bullet(moving_angle=0, rocket_fired=False, x=400, y=300))
+        game_objects.collectible_objects.add(supply_capsule.SupplyCapsule(x=400, y=300))
+        game_objects._bullet_hit_smth()
+        self.assertEqual(0, len(game_objects.active_bullets))
+        self.assertEqual(0, len(game_objects.collectible_objects))
+
     def testUfoHitAster(self):
         game_objects = gameObjectsLogic.GameObjectsLogic(SIZE, hard_mode=True)
         game_objects.active_asteroids.clear()
@@ -113,6 +122,15 @@ class TestGameObjectLogic(unittest.TestCase):
         game_objects._aster_hit_smht()
         self.assertEqual(True, game_objects.rocket_destroyed)
         self.assertEqual(0, len(game_objects.active_asteroids))
+
+    def testAsterDestroyCapsule(self):
+        game_objects = gameObjectsLogic.GameObjectsLogic(SIZE, hard_mode=True)
+        game_objects.active_asteroids.clear()
+        game_objects.active_asteroids.append(Asteroid(2, 400, 300))
+        game_objects.collectible_objects.add(supply_capsule.SupplyCapsule(x=400, y=300))
+        game_objects._aster_hit_smht()
+        self.assertEqual(0, len(game_objects.active_asteroids))
+        self.assertEqual(0, len(game_objects.collectible_objects))
 
     def testRocketBulDestroyUFO(self):
         game_objects = gameObjectsLogic.GameObjectsLogic(SIZE, hard_mode=True)
@@ -139,6 +157,14 @@ class TestGameObjectLogic(unittest.TestCase):
         game_objects._rocket_hit_other_obj()
         self.assertEqual(100, game_objects.rocket.fuel_percent())
         self.assertEqual(100, game_objects.rocket.ammo_percent())
+
+    def testRocketHitUfo(self):
+        game_objects = gameObjectsLogic.GameObjectsLogic(SIZE, hard_mode=True)
+        game_objects.ufo = ufo.UFO(height=300, move_right=1, x=400)
+        game_objects.rocket._invincible_time = -1
+        game_objects._rocket_hit_other_obj()
+        self.assertEqual(True, game_objects.rocket_destroyed)
+        self.assertIsNone(game_objects.ufo)
 
 
 if __name__ == '__main__':

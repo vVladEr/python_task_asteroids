@@ -5,6 +5,10 @@ class GameStatistics:
     def __init__(self, filename):
         self._filename = filename
 
+    @property
+    def file_name(self):
+        return self._filename
+
     def save_record(self, score, name):
         with shelve.open(self._filename) as records:
             if name not in records.keys():

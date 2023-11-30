@@ -205,6 +205,7 @@ class GameObjectsLogic:
             pass
         elif not self.rocket.is_invincible() and\
                 self.ufo is not None and self.rocket.image_rect.colliderect(self.ufo.image_rect):
+            self.ufo = None
             self.rocket_destroyed = True
         else:
             obj_to_del = None
